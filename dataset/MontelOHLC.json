@@ -1,0 +1,18 @@
+{
+	"name": "MontelOHLC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MontelAPIBase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/derivatives/ohlc/get/derivatives/ohlc/get?symbolKey=NPE+ENOFUTBLYR-22&fields=Open&fields=+High&fields=+Low&fields=+Settlement&fields=+Close&fields=+Volume&fields=+OpenInterest&fields=+Date&fields=ContractName&fromDate=2000-04-30&toDate=2022-05-10&sortType=Ascending&insertElementsWhenDataMissing=Never&continuous=False"
+			}
+		},
+		"schema": {}
+	}
+}
