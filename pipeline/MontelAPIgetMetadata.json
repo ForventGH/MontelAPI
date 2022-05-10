@@ -1,0 +1,380 @@
+{
+	"name": "MontelAPIgetMetadata",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetMontelToken",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://api.montelnews.com/gettoken",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"body": "grant_type=password&username=api_forvent1&client_id=f1535c2a-9148-472b-ba2a-674a368707d3&password=monteldata"
+				}
+			},
+			{
+				"name": "SetMontelAuthToken",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetMontelToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "MontelAuthToken",
+					"value": {
+						"value": "@activity('GetMontelToken').output.access_token",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "MetadataActiveContracts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "SetMontelAuthToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET",
+							"additionalHeaders": {
+								"value": "@{concat('Authorization: Bearer ', activity('GetMontelToken').output.access_token)}",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": true,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"parallelCopies": 1,
+					"dataIntegrationUnits": 2,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['TickerSymbol']"
+								},
+								"sink": {
+									"name": "TickerSymbol",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['FrontSymbol']"
+								},
+								"sink": {
+									"name": "FrontSymbol",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['MontelSymbol']"
+								},
+								"sink": {
+									"name": "MontelSymbol",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['MarketName']"
+								},
+								"sink": {
+									"name": "MarketName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['ContractName']"
+								},
+								"sink": {
+									"name": "ContractName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['MarketCode']"
+								},
+								"sink": {
+									"name": "MarketCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['FrontCode']"
+								},
+								"sink": {
+									"name": "FrontCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['DeliveryArea']"
+								},
+								"sink": {
+									"name": "DeliveryArea",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['GenericPeriod']"
+								},
+								"sink": {
+									"name": "GenericPeriod",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['CommodityGroup']"
+								},
+								"sink": {
+									"name": "CommodityGroup",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['CommodityType']"
+								},
+								"sink": {
+									"name": "CommodityType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Currency']"
+								},
+								"sink": {
+									"name": "Currency",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Denomination']"
+								},
+								"sink": {
+									"name": "Denomination",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['SpecificPeriod']"
+								},
+								"sink": {
+									"name": "SpecificPeriod",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['ContractYear']"
+								},
+								"sink": {
+									"name": "ContractYear",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Spread']"
+								},
+								"sink": {
+									"name": "Spread",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Otc']"
+								},
+								"sink": {
+									"name": "Otc",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['SourceId']"
+								},
+								"sink": {
+									"name": "SourceId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['BasePeakType']"
+								},
+								"sink": {
+									"name": "BasePeakType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['ContractSize']"
+								},
+								"sink": {
+									"name": "ContractSize",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Liquidity']"
+								},
+								"sink": {
+									"name": "Liquidity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['TradingStart']"
+								},
+								"sink": {
+									"name": "TradingStart",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['TradingEnd']"
+								},
+								"sink": {
+									"name": "TradingEnd",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['DeliveryStart']"
+								},
+								"sink": {
+									"name": "DeliveryStart",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['DeliveryEnd']"
+								},
+								"sink": {
+									"name": "DeliveryEnd",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['AccessLevel']['Access']"
+								},
+								"sink": {
+									"name": "ACCESS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['AccessLevel']['Delay']"
+								},
+								"sink": {
+									"name": "DELAY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['AccessLevel']['HistoricAccess']"
+								},
+								"sink": {
+									"name": "HistoricAccess",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['MaximumAllowdDayIntervalSizeForTrades']"
+								},
+								"sink": {
+									"name": "MaximumAllowdDayIntervalSizeForTrades",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['Elements']",
+						"mapComplexValuesToString": true
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "APIMetadataActiveContracts",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "IncMetadataActiveContracts",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"variables": {
+			"MontelAuthToken": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}

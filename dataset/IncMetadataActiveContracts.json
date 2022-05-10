@@ -1,0 +1,133 @@
+{
+	"name": "IncMetadataActiveContracts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MontelDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "TickerSymbol",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FrontSymbol",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MontelSymbol",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MarketName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ContractName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MarketCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FrontCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DeliveryArea",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GenericPeriod",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CommodityGroup",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CommodityType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Currency",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Denomination",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SpecificPeriod",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ContractYear",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Spread",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Otc",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SourceId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BasePeakType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ContractSize",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Liquidity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TradingStart",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TradingEnd",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DeliveryStart",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DeliveryEnd",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DELAY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HistoricAccess",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MaximumAllowdDayIntervalSizeForTrades",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "APIIncoming",
+			"table": "MontelMetadataActiveContracts"
+		}
+	}
+}

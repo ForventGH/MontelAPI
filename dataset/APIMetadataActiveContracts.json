@@ -1,0 +1,122 @@
+{
+	"name": "APIMetadataActiveContracts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MontelAPIBase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/derivatives/getmetadataforactivecontracts"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"Elements": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"TickerSymbol": {
+								"type": "string"
+							},
+							"FrontSymbol": {
+								"type": "string"
+							},
+							"MontelSymbol": {
+								"type": "string"
+							},
+							"MarketName": {
+								"type": "string"
+							},
+							"ContractName": {
+								"type": "string"
+							},
+							"MarketCode": {
+								"type": "string"
+							},
+							"FrontCode": {
+								"type": "string"
+							},
+							"DeliveryArea": {
+								"type": "string"
+							},
+							"GenericPeriod": {
+								"type": "string"
+							},
+							"CommodityGroup": {
+								"type": "string"
+							},
+							"CommodityType": {
+								"type": "string"
+							},
+							"Currency": {
+								"type": "string"
+							},
+							"Denomination": {
+								"type": "string"
+							},
+							"SpecificPeriod": {
+								"type": "string"
+							},
+							"ContractYear": {
+								"type": "string"
+							},
+							"Spread": {
+								"type": "boolean"
+							},
+							"Otc": {
+								"type": "boolean"
+							},
+							"SourceId": {
+								"type": "string"
+							},
+							"BasePeakType": {
+								"type": "string"
+							},
+							"ContractSize": {
+								"type": "integer"
+							},
+							"Liquidity": {
+								"type": "integer"
+							},
+							"TradingStart": {
+								"type": "string"
+							},
+							"TradingEnd": {
+								"type": "string"
+							},
+							"DeliveryStart": {
+								"type": "string"
+							},
+							"DeliveryEnd": {
+								"type": "string"
+							},
+							"AccessLevel": {
+								"type": "object",
+								"properties": {
+									"Access": {
+										"type": "boolean"
+									},
+									"Delay": {
+										"type": "integer"
+									},
+									"HistoricAccess": {
+										"type": "string"
+									}
+								}
+							},
+							"MaximumAllowdDayIntervalSizeForTrades": {
+								"type": "integer"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
