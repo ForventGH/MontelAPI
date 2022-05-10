@@ -1,0 +1,33 @@
+{
+	"name": "DownloadQueue",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MontelDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "APIType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TickerSymbol",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FromDate_yyyy_MM_dd",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ToDate_yyyy_MM_dd",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "APIIncoming",
+			"table": "DownloadQueue"
+		}
+	}
+}
