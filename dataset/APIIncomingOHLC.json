@@ -1,0 +1,44 @@
+{
+	"name": "APIIncomingOHLC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MontelDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SymbolKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ContractName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Settlement",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Volume",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "OpenInterest",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Date",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "APIIncoming",
+			"table": "OHLC"
+		}
+	}
+}
