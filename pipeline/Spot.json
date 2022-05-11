@@ -1,0 +1,166 @@
+{
+	"name": "Spot",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetMontelToken",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://api.montelnews.com/gettoken",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"body": "grant_type=password&username=api_forvent1&client_id=f1535c2a-9148-472b-ba2a-674a368707d3&password=monteldata"
+				}
+			},
+			{
+				"name": "SetMontelAuthToken",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetMontelToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "MontelAuthToken",
+					"value": {
+						"value": "@activity('GetMontelToken').output.access_token",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetSPOTdata",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "SetMontelAuthToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET",
+							"additionalHeaders": {
+								"value": "@{concat('Authorization: Bearer ', activity('GetMontelToken').output.access_token)}",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"parallelCopies": 1,
+					"dataIntegrationUnits": 2,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['SymbolKey']"
+								},
+								"sink": {
+									"name": "SymbolKey",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['ContractName']"
+								},
+								"sink": {
+									"name": "ContractName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Settlement']"
+								},
+								"sink": {
+									"name": "Settlement",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Volume']"
+								},
+								"sink": {
+									"name": "Volume",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['OpenInterest']"
+								},
+								"sink": {
+									"name": "OpenInterest",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Date']"
+								},
+								"sink": {
+									"name": "Date",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['Elements']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MontelSPot",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "APIIncomingOHLC",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

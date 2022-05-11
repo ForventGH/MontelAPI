@@ -1,0 +1,18 @@
+{
+	"name": "MontelSPot",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MontelAPIBase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/spot/getprices?spotKey=6&fields=Hours&fields=Base&fromDate=2022-01-01&toDate=2022-05-11&currency=EUR&sortType=Ascending"
+			}
+		},
+		"schema": {}
+	}
+}
