@@ -44,35 +44,16 @@
 				}
 			},
 			{
-				"name": "getOHLCQueue",
-				"type": "Lookup",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "AzureSqlSource",
-						"sqlReaderQuery": "Select * from  APIIncoming.DownloadQueue where APIType = 'OHLC'",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
-					},
-					"dataset": {
-						"referenceName": "DownloadQueue",
-						"type": "DatasetReference"
-					},
-					"firstRowOnly": true
-				}
-			},
-			{
 				"name": "GetOHLCdata",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "SetMontelAuthToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -178,126 +159,6 @@
 						"type": "DatasetReference"
 					}
 				]
-			},
-			{
-				"name": "ForEach1",
-				"type": "ForEach",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"activities": [
-						{
-							"name": "GetOHLCdata_copy1",
-							"type": "Copy",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "7.00:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"source": {
-									"type": "JsonSource",
-									"storeSettings": {
-										"type": "HttpReadSettings",
-										"requestMethod": "GET",
-										"additionalHeaders": {
-											"value": "@{concat('Authorization: Bearer ', activity('GetMontelToken').output.access_token)}",
-											"type": "Expression"
-										},
-										"requestTimeout": ""
-									},
-									"formatSettings": {
-										"type": "JsonReadSettings"
-									}
-								},
-								"sink": {
-									"type": "AzureSqlSink",
-									"writeBehavior": "insert",
-									"sqlWriterUseTableLock": false
-								},
-								"enableStaging": false,
-								"parallelCopies": 1,
-								"dataIntegrationUnits": 2,
-								"translator": {
-									"type": "TabularTranslator",
-									"mappings": [
-										{
-											"source": {
-												"path": "$['SymbolKey']"
-											},
-											"sink": {
-												"name": "SymbolKey",
-												"type": "String"
-											}
-										},
-										{
-											"source": {
-												"path": "['ContractName']"
-											},
-											"sink": {
-												"name": "ContractName",
-												"type": "String"
-											}
-										},
-										{
-											"source": {
-												"path": "['Settlement']"
-											},
-											"sink": {
-												"name": "Settlement",
-												"type": "String"
-											}
-										},
-										{
-											"source": {
-												"path": "['Volume']"
-											},
-											"sink": {
-												"name": "Volume",
-												"type": "String"
-											}
-										},
-										{
-											"source": {
-												"path": "['OpenInterest']"
-											},
-											"sink": {
-												"name": "OpenInterest",
-												"type": "String"
-											}
-										},
-										{
-											"source": {
-												"path": "['Date']"
-											},
-											"sink": {
-												"name": "Date",
-												"type": "String"
-											}
-										}
-									],
-									"collectionReference": "$['Elements']"
-								}
-							},
-							"inputs": [
-								{
-									"referenceName": "MontelOHLC",
-									"type": "DatasetReference"
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "APIIncomingOHLC",
-									"type": "DatasetReference"
-								}
-							]
-						}
-					]
-				}
 			}
 		],
 		"variables": {
