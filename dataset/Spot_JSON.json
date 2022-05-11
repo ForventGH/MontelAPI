@@ -1,0 +1,33 @@
+{
+	"name": "Spot_JSON",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MontelDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SpotKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SpotName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Denomination",
+				"type": "nvarchar"
+			},
+			{
+				"name": "JSON",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "APIIncoming",
+			"table": "SPOT_JSON"
+		}
+	}
+}
