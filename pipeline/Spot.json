@@ -44,8 +44,8 @@
 				}
 			},
 			{
-				"name": "GetSPOTdata",
-				"type": "Copy",
+				"name": "Get JSON",
+				"type": "WebActivity",
 				"dependsOn": [
 					{
 						"activity": "SetMontelAuthToken",
@@ -63,102 +63,15 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "JsonSource",
-						"storeSettings": {
-							"type": "HttpReadSettings",
-							"requestMethod": "GET",
-							"additionalHeaders": {
-								"value": "@{concat('Authorization: Bearer ', activity('GetMontelToken').output.access_token)}",
-								"type": "Expression"
-							},
-							"requestTimeout": ""
-						},
-						"formatSettings": {
-							"type": "JsonReadSettings"
+					"url": "https://api.montelnews.com:443/spot/getprices?spotKey=6&fields=Hours&fields=Base&fromDate=2022-01-01&toDate=2022-05-11&currency=EUR&sortType=Ascending",
+					"method": "GET",
+					"headers": {
+						"Authorisation": {
+							"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
+							"type": "Expression"
 						}
-					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
-					},
-					"enableStaging": false,
-					"parallelCopies": 1,
-					"dataIntegrationUnits": 2,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "$['SymbolKey']"
-								},
-								"sink": {
-									"name": "SymbolKey",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['ContractName']"
-								},
-								"sink": {
-									"name": "ContractName",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['Settlement']"
-								},
-								"sink": {
-									"name": "Settlement",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['Volume']"
-								},
-								"sink": {
-									"name": "Volume",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['OpenInterest']"
-								},
-								"sink": {
-									"name": "OpenInterest",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['Date']"
-								},
-								"sink": {
-									"name": "Date",
-									"type": "String"
-								}
-							}
-						],
-						"collectionReference": "$['Elements']"
 					}
-				},
-				"inputs": [
-					{
-						"referenceName": "MontelSPot",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "APIIncomingOHLC",
-						"type": "DatasetReference"
-					}
-				]
+				}
 			}
 		],
 		"annotations": []
