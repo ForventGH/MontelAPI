@@ -11,7 +11,7 @@
 			"location": {
 				"type": "HttpServerLocation",
 				"relativeUrl": {
-					"value": "/derivatives/ohlc/get?symbolKey=NPE+ENOFUTBLQ2-22&fields=Open&fields=+High&fields=+Low&fields=+Settlement&fields=+Close&fields=+Volume&fields=+OpenInterest&fields=+Date&fields=ContractName&fromDate=2000-04-30&toDate=2022-05-10&sortType=Ascending&insertElementsWhenDataMissing=Never&continuous=True",
+					"value": "/derivatives/ohlc/get?symbolKey=NPE+ENOFUTBLQ3-22&fields=Open&fields=+High&fields=+Low&fields=+Settlement&fields=+Close&fields=+Volume&fields=+OpenInterest&fields=+Date&fields=ContractName&fromDate=2000-04-30&toDate=2022-05-10&sortType=Ascending&insertElementsWhenDataMissing=Never&continuous=True",
 					"type": "Expression"
 				}
 			}
