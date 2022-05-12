@@ -66,14 +66,55 @@
 					"url": "https://api.montelnews.com:443/spot/getprices?spotKey=6&fields=Hours&fields=Base&fromDate=2022-01-01&toDate=2022-05-11&currency=EUR&sortType=Ascending",
 					"method": "GET",
 					"headers": {
-						"Authorisation": {
+						"Authorization": {
 							"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
 							"type": "Expression"
 						}
 					}
 				}
+			},
+			{
+				"name": "StoreSpot",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Get JSON",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[APIJSON].[StoreSPOT]",
+					"storedProcedureParameters": {
+						"JSet": {
+							"value": {
+								"value": "@activity('Get JSON').output",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "MontelDB",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
+		"variables": {
+			"MontelAuthToken": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
