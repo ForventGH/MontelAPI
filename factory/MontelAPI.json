@@ -1,0 +1,9 @@
+{
+	"name": "MontelAPI",
+	"location": "norwayeast",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "3684c9e2-fe27-4a29-99ba-03c3a73debe6",
+		"tenantId": "c65e5187-1a25-4d5e-bc67-4f8fcd07132e"
+	}
+}
