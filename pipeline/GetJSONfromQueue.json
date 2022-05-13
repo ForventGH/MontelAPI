@@ -1,5 +1,5 @@
 {
-	"name": "Spot",
+	"name": "GetJSONfromQueue",
 	"properties": {
 		"activities": [
 			{
@@ -44,8 +44,8 @@
 				}
 			},
 			{
-				"name": "Get JSON",
-				"type": "WebActivity",
+				"name": "GetQueue",
+				"type": "Lookup",
 				"dependsOn": [
 					{
 						"activity": "SetMontelAuthToken",
@@ -63,50 +63,106 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://api.montelnews.com:443/spot/getprices?spotKey=6&fields=Hours&fields=Base&fromDate=2022-01-01&toDate=2022-05-11&currency=EUR&sortType=Ascending",
-					"method": "GET",
-					"headers": {
-						"Authorization": {
-							"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
-							"type": "Expression"
-						}
-					}
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DownloadQueue",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
-				"name": "StoreSpot",
-				"type": "SqlServerStoredProcedure",
+				"name": "ProcessQueue",
+				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get JSON",
+						"activity": "GetQueue",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					}
 				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[APIJSON].[StoreSPOT]",
-					"storedProcedureParameters": {
-						"JSet": {
-							"value": {
-								"value": "@activity('Get JSON').output",
-								"type": "Expression"
+					"items": {
+						"value": "@activity('GetQueue').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Get JSON",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
 							},
-							"type": "String"
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@item().URL",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"headers": {
+									"Authorization": {
+										"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "StoreJSON",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Get JSON",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[APIIncoming].[StoreJSON]",
+								"storedProcedureParameters": {
+									"JSet": {
+										"value": {
+											"value": "@item().URL",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"QueueID": {
+										"value": {
+											"value": "@item().QueueID",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "MontelDB",
+								"type": "LinkedServiceReference"
+							}
 						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "MontelDB",
-					"type": "LinkedServiceReference"
+					]
 				}
 			}
 		],
