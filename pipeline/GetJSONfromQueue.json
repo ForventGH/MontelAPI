@@ -65,6 +65,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
+						"sqlReaderQuery": "Select * from [APIIncoming].[DownloadQueue] where Downloaded is NULL",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -141,6 +142,13 @@
 							"typeProperties": {
 								"storedProcedureName": "[APIIncoming].[StoreJSON]",
 								"storedProcedureParameters": {
+									"apitype": {
+										"value": {
+											"value": "@item().ApiTYpe",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
 									"JSet": {
 										"value": {
 											"value": "@string(activity('Get JSON').output)",
