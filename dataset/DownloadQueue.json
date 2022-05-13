@@ -9,25 +9,17 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "APIType",
+				"name": "URL",
 				"type": "nvarchar"
 			},
 			{
-				"name": "TickerSymbol",
-				"type": "nvarchar"
-			},
-			{
-				"name": "FromDate_yyyy_MM_dd",
-				"type": "nvarchar"
-			},
-			{
-				"name": "ToDate_yyyy_MM_dd",
-				"type": "nvarchar"
+				"name": "QueueID",
+				"type": "uniqueidentifier"
 			}
 		],
 		"typeProperties": {
 			"schema": "APIIncoming",
-			"table": "DownloadQueue"
+			"table": "GetQueue"
 		}
 	}
 }
