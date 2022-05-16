@@ -44,7 +44,7 @@
 				}
 			},
 			{
-				"name": "MetadataActiveDerivativesContracts",
+				"name": "ActiveContracts",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -351,11 +351,11 @@
 				]
 			},
 			{
-				"name": "MetadataInActiveDerivativesContracts",
+				"name": "InactiveContracts",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "MetadataActiveDerivativesContracts",
+						"activity": "ActiveContracts",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -376,7 +376,7 @@
 							{
 								"name": "ActiveExpired",
 								"value": {
-									"value": "Active",
+									"value": "Inactive",
 									"type": "Expression"
 								}
 							}
@@ -393,6 +393,11 @@
 						"formatSettings": {
 							"type": "JsonReadSettings"
 						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
 					},
 					"enableStaging": false,
 					"parallelCopies": 1,
@@ -641,7 +646,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "APIMetadataActiveContracts",
+						"referenceName": "APIMetadataINactiveContracts",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DerivativesContracts",
 						"type": "DatasetReference"
 					}
 				]
