@@ -219,21 +219,14 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@not(empty(activity('CheckTicker').output.firstrow))",
+									"value": "@not(empty(activity('CheckTicker').output.firstRow.Key))",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
 									{
 										"name": "GetMetadataForTicker",
 										"type": "WebActivity",
-										"dependsOn": [
-											{
-												"activity": "SetTicker",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
+										"dependsOn": [],
 										"policy": {
 											"timeout": "7.00:00:00",
 											"retry": 0,
@@ -305,28 +298,9 @@
 											"referenceName": "MontelDB",
 											"type": "LinkedServiceReference"
 										}
-									},
-									{
-										"name": "SetTicker",
-										"type": "SetVariable",
-										"dependsOn": [],
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "Ticker",
-											"value": {
-												"value": "@item().Key",
-												"type": "Expression"
-											}
-										}
 									}
 								]
 							}
-						},
-						{
-							"name": "Set variable1",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": []
 						}
 					]
 				}
