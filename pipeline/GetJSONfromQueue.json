@@ -97,14 +97,7 @@
 						{
 							"name": "Get JSON",
 							"type": "WebActivity",
-							"dependsOn": [
-								{
-									"activity": "CheckTicker",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
+							"dependsOn": [],
 							"policy": {
 								"timeout": "7.00:00:00",
 								"retry": 0,
@@ -203,6 +196,43 @@
 									"referenceName": "ContractTickers",
 									"type": "DatasetReference"
 								}
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "CheckTicker",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"ifFalseActivities": [
+									{
+										"name": "GetMetadataForTicker",
+										"type": "WebActivity",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"url": {
+												"value": "@concat('https://api.montelnews.com:443/derivatives/getmetadataforspecifiedcontracts?symbolKeys=NPE+EDEFPW22-22')",
+												"type": "Expression"
+											},
+											"method": "GET"
+										}
+									}
+								]
 							}
 						}
 					]
