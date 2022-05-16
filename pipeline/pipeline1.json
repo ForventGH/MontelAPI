@@ -1,0 +1,316 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetMontelToken",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://api.montelnews.com/gettoken",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"body": "grant_type=password&username=api_forvent1&client_id=f1535c2a-9148-472b-ba2a-674a368707d3&password=monteldata"
+				}
+			},
+			{
+				"name": "SetMontelAuthToken",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetMontelToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "MontelAuthToken",
+					"value": {
+						"value": "@activity('GetMontelToken').output.access_token",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetQueue",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "SetMontelAuthToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "Select * from  [APIIncoming].[GetQueue] where Downloaded is NULL",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DownloadQueue",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ProcessQueue",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetQueue",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetQueue').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Get JSON",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "If Condition1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@item().URL",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"headers": {
+									"Authorization": {
+										"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "StoreJSON",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Get JSON",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[APIIncoming].[StoreJSON]",
+								"storedProcedureParameters": {
+									"apitype": {
+										"value": {
+											"value": "@item().ApiTYpe",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"JSet": {
+										"value": {
+											"value": "@string(activity('Get JSON').output)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"QueueID": {
+										"value": {
+											"value": "@item().QueueID",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "MontelDB",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "CheckTicker",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('select * from MetaData.DerivatesContracts where TickerSymbol = ', item().symbolKey)",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ContractTickers",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "CheckTicker",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('CheckTicker').output.contains('firstRow')",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "GetMetadataForTicker",
+										"type": "WebActivity",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"url": {
+												"value": "@concat('https://api.montelnews.com:443/derivatives/getmetadataforspecifiedcontracts?symbolKeys=', item().symbolKey)",
+												"type": "Expression"
+											},
+											"method": "GET",
+											"headers": {
+												"Authorization": {
+													"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
+													"type": "Expression"
+												}
+											}
+										}
+									},
+									{
+										"name": "StoreTickerMetaData",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "GetMetadataForTicker",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[APIIncoming].[StoreJSON]",
+											"storedProcedureParameters": {
+												"apitype": {
+													"value": {
+														"value": "'MetadataTicker'",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"JSet": {
+													"value": {
+														"value": "@string(activity('GetMetadataForTicker').output)",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"QueueID": {
+													"value": {
+														"value": "-1",
+														"type": "Expression"
+													},
+													"type": "Int32"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "MontelDB",
+											"type": "LinkedServiceReference"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"MontelAuthToken": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
