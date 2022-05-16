@@ -226,7 +226,14 @@
 									{
 										"name": "GetMetadataForTicker",
 										"type": "WebActivity",
-										"dependsOn": [],
+										"dependsOn": [
+											{
+												"activity": "SetTicker",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
 										"policy": {
 											"timeout": "7.00:00:00",
 											"retry": 0,
@@ -298,9 +305,28 @@
 											"referenceName": "MontelDB",
 											"type": "LinkedServiceReference"
 										}
+									},
+									{
+										"name": "SetTicker",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "Ticker",
+											"value": {
+												"value": "@item().Key",
+												"type": "Expression"
+											}
+										}
 									}
 								]
 							}
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": []
 						}
 					]
 				}
@@ -308,6 +334,9 @@
 		],
 		"variables": {
 			"MontelAuthToken": {
+				"type": "String"
+			},
+			"Ticker": {
 				"type": "String"
 			}
 		},
