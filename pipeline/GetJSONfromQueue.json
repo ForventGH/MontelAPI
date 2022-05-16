@@ -219,7 +219,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@activity('CheckTicker').output.contains('firstRow')",
+									"value": "@not(empty(activity('CheckTicker').output.firstrow))",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
