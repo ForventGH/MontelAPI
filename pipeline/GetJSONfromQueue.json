@@ -274,7 +274,7 @@
 											"storedProcedureParameters": {
 												"apitype": {
 													"value": {
-														"value": "'MetadataTicker'",
+														"value": "'MetaDataTicker'",
 														"type": "Expression"
 													},
 													"type": "String"
@@ -287,10 +287,7 @@
 													"type": "String"
 												},
 												"QueueID": {
-													"value": {
-														"value": "-1",
-														"type": "Expression"
-													},
+													"value": "-1",
 													"type": "Int32"
 												}
 											}
