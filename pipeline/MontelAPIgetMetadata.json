@@ -317,43 +317,16 @@
 							},
 							{
 								"source": {
-									"path": "['AccessLevel']['Access']"
+									"path": "$['Active']"
 								},
 								"sink": {
-									"name": "ACCESS",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['AccessLevel']['Delay']"
-								},
-								"sink": {
-									"name": "DELAY",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['AccessLevel']['HistoricAccess']"
-								},
-								"sink": {
-									"name": "HistoricAccess",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['MaximumAllowdDayIntervalSizeForTrades']"
-								},
-								"sink": {
-									"name": "MaximumAllowdDayIntervalSizeForTrades",
+									"name": "ActiveExpired",
 									"type": "String"
 								}
 							}
 						],
 						"collectionReference": "$['Elements']",
-						"mapComplexValuesToString": true
+						"mapComplexValuesToString": false
 					}
 				},
 				"inputs": [
