@@ -218,6 +218,10 @@
 							],
 							"userProperties": [],
 							"typeProperties": {
+								"expression": {
+									"value": "@activity('CheckTicker').output.contains('firstRow')",
+									"type": "Expression"
+								},
 								"ifFalseActivities": [
 									{
 										"name": "GetMetadataForTicker",
