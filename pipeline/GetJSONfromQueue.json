@@ -193,7 +193,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "@concat('select * from MetaData.DerivatesContracts where TickerSymbol = ', item().Key)",
+										"value": "@concat('select * from MetaData.DerivatesContracts where TickerSymbol = ''', item().Key, '''')",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
