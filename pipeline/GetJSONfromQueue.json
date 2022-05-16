@@ -236,7 +236,13 @@
 												"value": "@concat('https://api.montelnews.com:443/derivatives/getmetadataforspecifiedcontracts?symbolKeys=NPE+EDEFPW22-22')",
 												"type": "Expression"
 											},
-											"method": "GET"
+											"method": "GET",
+											"headers": {
+												"Authorization": {
+													"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
+													"type": "Expression"
+												}
+											}
 										}
 									}
 								]
