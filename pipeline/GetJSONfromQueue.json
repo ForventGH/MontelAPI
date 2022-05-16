@@ -238,7 +238,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"url": {
-												"value": "@concat('https://api.montelnews.com:443/derivatives/getmetadataforspecifiedcontracts?symbolKeys=', item().symbolKey)",
+												"value": "@concat('https://api.montelnews.com:443/derivatives/getmetadataforspecifiedcontracts?symbolKeys=', item().Key)",
 												"type": "Expression"
 											},
 											"method": "GET",
