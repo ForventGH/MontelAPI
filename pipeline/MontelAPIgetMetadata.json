@@ -65,6 +65,12 @@
 				"typeProperties": {
 					"source": {
 						"type": "JsonSource",
+						"additionalColumns": [
+							{
+								"name": "ActiveExpired",
+								"value": "Active"
+							}
+						],
 						"storeSettings": {
 							"type": "HttpReadSettings",
 							"requestMethod": "GET",
