@@ -44,7 +44,7 @@
 				}
 			},
 			{
-				"name": "MetadataActiveContracts",
+				"name": "MetadataActiveDerivativesContracts",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -68,7 +68,10 @@
 						"additionalColumns": [
 							{
 								"name": "ActiveExpired",
-								"value": "Active"
+								"value": {
+									"value": "Active",
+									"type": "Expression"
+								}
 							}
 						],
 						"storeSettings": {
@@ -323,7 +326,315 @@
 							},
 							{
 								"source": {
-									"path": "$['Active']"
+									"path": "$['ActiveExpired']"
+								},
+								"sink": {
+									"name": "ActiveExpired",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['Elements']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "APIMetadataActiveContracts",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "IncMetadataActiveContracts",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "MetadataInActiveDerivativesContracts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "MetadataActiveDerivativesContracts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"additionalColumns": [
+							{
+								"name": "ActiveExpired",
+								"value": {
+									"value": "Active",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET",
+							"additionalHeaders": {
+								"value": "@{concat('Authorization: Bearer ', activity('GetMontelToken').output.access_token)}",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": true,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"parallelCopies": 1,
+					"dataIntegrationUnits": 2,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['TickerSymbol']"
+								},
+								"sink": {
+									"name": "TickerSymbol",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['FrontSymbol']"
+								},
+								"sink": {
+									"name": "FrontSymbol",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['MontelSymbol']"
+								},
+								"sink": {
+									"name": "MontelSymbol",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['MarketName']"
+								},
+								"sink": {
+									"name": "MarketName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['ContractName']"
+								},
+								"sink": {
+									"name": "ContractName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['MarketCode']"
+								},
+								"sink": {
+									"name": "MarketCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['FrontCode']"
+								},
+								"sink": {
+									"name": "FrontCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['DeliveryArea']"
+								},
+								"sink": {
+									"name": "DeliveryArea",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['GenericPeriod']"
+								},
+								"sink": {
+									"name": "GenericPeriod",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['CommodityGroup']"
+								},
+								"sink": {
+									"name": "CommodityGroup",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['CommodityType']"
+								},
+								"sink": {
+									"name": "CommodityType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Currency']"
+								},
+								"sink": {
+									"name": "Currency",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Denomination']"
+								},
+								"sink": {
+									"name": "Denomination",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['SpecificPeriod']"
+								},
+								"sink": {
+									"name": "SpecificPeriod",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['ContractYear']"
+								},
+								"sink": {
+									"name": "ContractYear",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Spread']"
+								},
+								"sink": {
+									"name": "Spread",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Otc']"
+								},
+								"sink": {
+									"name": "Otc",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['SourceId']"
+								},
+								"sink": {
+									"name": "SourceId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['BasePeakType']"
+								},
+								"sink": {
+									"name": "BasePeakType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['ContractSize']"
+								},
+								"sink": {
+									"name": "ContractSize",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Liquidity']"
+								},
+								"sink": {
+									"name": "Liquidity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['TradingStart']"
+								},
+								"sink": {
+									"name": "TradingStart",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['TradingEnd']"
+								},
+								"sink": {
+									"name": "TradingEnd",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['DeliveryStart']"
+								},
+								"sink": {
+									"name": "DeliveryStart",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['DeliveryEnd']"
+								},
+								"sink": {
+									"name": "DeliveryEnd",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['ActiveExpired']"
 								},
 								"sink": {
 									"name": "ActiveExpired",
