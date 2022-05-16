@@ -220,7 +220,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@empty(activity('CheckTickerKey').output.value)",
+									"value": "@not(empty(activity('CheckTickerKey').output.value))",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
