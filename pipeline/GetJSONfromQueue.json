@@ -178,7 +178,7 @@
 							}
 						},
 						{
-							"name": "CheckTicker",
+							"name": "CheckTickerKey",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -202,7 +202,8 @@
 								"dataset": {
 									"referenceName": "ContractTickers",
 									"type": "DatasetReference"
-								}
+								},
+								"firstRowOnly": false
 							}
 						},
 						{
@@ -210,7 +211,7 @@
 							"type": "IfCondition",
 							"dependsOn": [
 								{
-									"activity": "CheckTicker",
+									"activity": "CheckTickerKey",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -219,7 +220,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@not(empty(activity('CheckTicker').output.firstRow.Key))",
+									"value": "@empty(activity('CheckTickerKey').output.value)",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
