@@ -189,7 +189,7 @@
 								},
 								"ifTrueActivities": [
 									{
-										"name": "CheckTickerKey_copy1",
+										"name": "CheckTickerKey",
 										"type": "Lookup",
 										"dependsOn": [],
 										"policy": {
@@ -218,11 +218,11 @@
 										}
 									},
 									{
-										"name": "Add Metadata for Ticker_copy1",
+										"name": "Add Metadata for Ticker",
 										"type": "IfCondition",
 										"dependsOn": [
 											{
-												"activity": "CheckTickerKey_copy1",
+												"activity": "CheckTickerKey",
 												"dependencyConditions": [
 													"Succeeded"
 												]
