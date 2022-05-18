@@ -186,11 +186,52 @@
 								"expression": {
 									"value": "@equals(item().apitype, 'ohlc') ",
 									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "CheckTickerKey",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('select * from MetaData.DerivativeContract where TickerSymbol = ''', item().Key, '''')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
-								"ifTrueActivities": [
+								"dataset": {
+									"referenceName": "ContractTickers",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": false
+							}
+						},
+						{
+							"name": "Add Metadata for Ticker",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@not(empty(activity('CheckTickerKey').output.value))",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
 									{
-										"name": "CheckTickerKey",
-										"type": "Lookup",
+										"name": "GetMetadataForTicker",
+										"type": "WebActivity",
 										"dependsOn": [],
 										"policy": {
 											"timeout": "7.00:00:00",
@@ -201,114 +242,64 @@
 										},
 										"userProperties": [],
 										"typeProperties": {
-											"source": {
-												"type": "AzureSqlSource",
-												"sqlReaderQuery": {
-													"value": "@concat('select * from MetaData.DerivativeContract where TickerSymbol = ''', item().Key, '''')",
+											"url": {
+												"value": "@concat('https://api.montelnews.com:443/derivatives/getmetadataforspecifiedcontracts?symbolKeys=', item().Key)",
+												"type": "Expression"
+											},
+											"method": "GET",
+											"headers": {
+												"Authorization": {
+													"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
 													"type": "Expression"
-												},
-												"queryTimeout": "02:00:00",
-												"partitionOption": "None"
-											},
-											"dataset": {
-												"referenceName": "ContractTickers",
-												"type": "DatasetReference"
-											},
-											"firstRowOnly": false
+												}
+											}
 										}
 									},
 									{
-										"name": "Add Metadata for Ticker",
-										"type": "IfCondition",
+										"name": "StoreTickerMetaData",
+										"type": "SqlServerStoredProcedure",
 										"dependsOn": [
 											{
-												"activity": "CheckTickerKey",
+												"activity": "GetMetadataForTicker",
 												"dependencyConditions": [
 													"Succeeded"
 												]
 											}
 										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
 										"userProperties": [],
 										"typeProperties": {
-											"expression": {
-												"value": "@not(empty(activity('CheckTickerKey').output.value))",
-												"type": "Expression"
-											},
-											"ifFalseActivities": [
-												{
-													"name": "GetMetadataForTicker_copy1",
-													"type": "WebActivity",
-													"dependsOn": [],
-													"policy": {
-														"timeout": "7.00:00:00",
-														"retry": 0,
-														"retryIntervalInSeconds": 30,
-														"secureOutput": false,
-														"secureInput": false
+											"storedProcedureName": "[APIIncoming].[StoreJSON]",
+											"storedProcedureParameters": {
+												"apitype": {
+													"value": {
+														"value": "MetaDataTicker",
+														"type": "Expression"
 													},
-													"userProperties": [],
-													"typeProperties": {
-														"url": {
-															"value": "@concat('https://api.montelnews.com:443/derivatives/getmetadataforspecifiedcontracts?symbolKeys=', item().Key)",
-															"type": "Expression"
-														},
-														"method": "GET",
-														"headers": {
-															"Authorization": {
-																"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
-																"type": "Expression"
-															}
-														}
-													}
+													"type": "String"
 												},
-												{
-													"name": "StoreTickerMetaData_copy1",
-													"type": "SqlServerStoredProcedure",
-													"dependsOn": [
-														{
-															"activity": "GetMetadataForTicker_copy1",
-															"dependencyConditions": [
-																"Succeeded"
-															]
-														}
-													],
-													"policy": {
-														"timeout": "7.00:00:00",
-														"retry": 0,
-														"retryIntervalInSeconds": 30,
-														"secureOutput": false,
-														"secureInput": false
+												"JSet": {
+													"value": {
+														"value": "@string(activity('GetMetadataForTicker').output)",
+														"type": "Expression"
 													},
-													"userProperties": [],
-													"typeProperties": {
-														"storedProcedureName": "[APIIncoming].[StoreJSON]",
-														"storedProcedureParameters": {
-															"apitype": {
-																"value": {
-																	"value": "MetaDataTicker",
-																	"type": "Expression"
-																},
-																"type": "String"
-															},
-															"JSet": {
-																"value": {
-																	"value": "@string(activity('GetMetadataForTicker').output)",
-																	"type": "Expression"
-																},
-																"type": "String"
-															},
-															"QueueID": {
-																"value": "@item().QueueID",
-																"type": "Int32"
-															}
-														}
-													},
-													"linkedServiceName": {
-														"referenceName": "MontelDB",
-														"type": "LinkedServiceReference"
-													}
+													"type": "String"
+												},
+												"QueueID": {
+													"value": "@item().QueueID",
+													"type": "Int32"
 												}
-											]
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "MontelDB",
+											"type": "LinkedServiceReference"
 										}
 									}
 								]
