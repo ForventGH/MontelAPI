@@ -299,6 +299,143 @@
 									}
 								]
 							}
+						},
+						{
+							"name": "CheckIFOHLC",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(item().apitype, 'ohlc') ",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "CheckTickerKey_copy1",
+										"type": "Lookup",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderQuery": {
+													"value": "@concat('select * from MetaData.DerivativeContract where TickerSymbol = ''', item().Key, '''')",
+													"type": "Expression"
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"dataset": {
+												"referenceName": "ContractTickers",
+												"type": "DatasetReference"
+											},
+											"firstRowOnly": false
+										}
+									},
+									{
+										"name": "Add Metadata for Ticker_copy1",
+										"type": "IfCondition",
+										"dependsOn": [
+											{
+												"activity": "CheckTickerKey_copy1",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"expression": {
+												"value": "@not(empty(activity('CheckTickerKey').output.value))",
+												"type": "Expression"
+											},
+											"ifFalseActivities": [
+												{
+													"name": "GetMetadataForTicker_copy1",
+													"type": "WebActivity",
+													"dependsOn": [],
+													"policy": {
+														"timeout": "7.00:00:00",
+														"retry": 0,
+														"retryIntervalInSeconds": 30,
+														"secureOutput": false,
+														"secureInput": false
+													},
+													"userProperties": [],
+													"typeProperties": {
+														"url": {
+															"value": "@concat('https://api.montelnews.com:443/derivatives/getmetadataforspecifiedcontracts?symbolKeys=', item().Key)",
+															"type": "Expression"
+														},
+														"method": "GET",
+														"headers": {
+															"Authorization": {
+																"value": "@{concat('Bearer ', activity('GetMontelToken').output.access_token)}",
+																"type": "Expression"
+															}
+														}
+													}
+												},
+												{
+													"name": "StoreTickerMetaData_copy1",
+													"type": "SqlServerStoredProcedure",
+													"dependsOn": [
+														{
+															"activity": "GetMetadataForTicker_copy1",
+															"dependencyConditions": [
+																"Succeeded"
+															]
+														}
+													],
+													"policy": {
+														"timeout": "7.00:00:00",
+														"retry": 0,
+														"retryIntervalInSeconds": 30,
+														"secureOutput": false,
+														"secureInput": false
+													},
+													"userProperties": [],
+													"typeProperties": {
+														"storedProcedureName": "[APIIncoming].[StoreJSON]",
+														"storedProcedureParameters": {
+															"apitype": {
+																"value": {
+																	"value": "MetaDataTicker",
+																	"type": "Expression"
+																},
+																"type": "String"
+															},
+															"JSet": {
+																"value": {
+																	"value": "@string(activity('GetMetadataForTicker').output)",
+																	"type": "Expression"
+																},
+																"type": "String"
+															},
+															"QueueID": {
+																"value": "@item().QueueID",
+																"type": "Int32"
+															}
+														}
+													},
+													"linkedServiceName": {
+														"referenceName": "MontelDB",
+														"type": "LinkedServiceReference"
+													}
+												}
+											]
+										}
+									}
+								]
+							}
 						}
 					]
 				}
