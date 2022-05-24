@@ -65,7 +65,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "Select * from  [APIIncoming].[GetQueue] where Downloaded is NULL",
+						"sqlReaderQuery": "Select * from  [APIIncoming].[GetQueue] ",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -258,7 +258,10 @@
 													"type": "String"
 												},
 												"QueueID": {
-													"value": "@item().QueueID",
+													"value": {
+														"value": "@item().QueueID",
+														"type": "Expression"
+													},
 													"type": "Int32"
 												}
 											}
